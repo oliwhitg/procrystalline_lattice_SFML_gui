@@ -1,0 +1,15 @@
+#!/bin/csh 
+#$ -l s_rt=500:00:00
+set fromdir = /home/dirac/oxford/jesu2929/test/
+set todir = /home/dirac/oxford/jesu2929/test/
+
+setenv WORK /tmp/$USER/code_cycle/job_data/$JOB_ID
+
+mkdir -p $WORK
+cd $fromdir
+cp -r * $WORK
+cd $WORK
+./procrystal.x
+cp * $todir
+rm -Rf $WORK
+

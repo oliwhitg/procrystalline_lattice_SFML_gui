@@ -1,0 +1,15 @@
+#!/bin/csh 
+#$ -l s_rt=500:00:00
+set todir = /home/oli/Desktop/procrystalline_lattices-dev/src/output/example_4_2_3_252_2_2
+set fromdir = /home/oli/Desktop/procrystalline_lattices-dev/src
+
+setenv WORK /tmp/$USER/code_cycle/job_data/$JOB_ID
+
+mkdir -p $WORK
+cd $fromdir
+cp -r * $WORK
+cd $WORK
+./procrystal.x
+cp * $todir
+rm -Rf $WORK
+

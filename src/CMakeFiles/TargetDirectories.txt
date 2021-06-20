@@ -1,0 +1,3 @@
+/media/oli/Work_Files_nvme/procrystalline_lattice-gameify/src/CMakeFiles/rebuild_cache.dir
+/media/oli/Work_Files_nvme/procrystalline_lattice-gameify/src/CMakeFiles/edit_cache.dir
+/media/oli/Work_Files_nvme/procrystalline_lattice-gameify/src/CMakeFiles/procrystal.x.dir

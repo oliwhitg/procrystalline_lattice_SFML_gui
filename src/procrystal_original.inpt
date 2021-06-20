@@ -1,0 +1,35 @@
+Procrystal Input File
+----------------------------------
+Procrystal Properties
+sq          lattice type (sq/tri/snub/isosnub/trihex/hex)
+3           node coordination
+random      link orientations (random/pattern1/pattern2)
+1 1 0 0 1 0     pattern code
+16         lattice dimension
+0.00       fraction n+1 coordinate
+1.00       fraction of n+1 coordinate in order
+0.33       fraction n-1 coordinate
+0.00       fraction n-1 coordinate in order
+0           control n-1 coordinate orientation?
+0.01         fraction n-1 coordinate linear
+1            random configuration?
+to_run_fixed_list_11
+1
+----------------------------------
+Monte Carlo Parameters
+0           random seed
+0.1         temperature
+2          samples
+1           mc switch (0 doesnt work)
+5        max try
+----------------------------------
+Output
+1         output style
+example   output prefix
+1          write samples
+0           calculate environments
+0           calculate rdfs
+0.02        RDF delta
+0           calculate sk
+0.01        sk delta
+1000          sk n max
