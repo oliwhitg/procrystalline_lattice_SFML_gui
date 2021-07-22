@@ -38,7 +38,7 @@ public:
     int numconnections;
     VecR<int> allowedCnxs,cnxs,rings;
     VecF<double> crd;
-    int latticedim;
+    int latticedimX, latticedimY;
     float fractionLlinear;
     //Constructors
     Node();
@@ -49,9 +49,9 @@ public:
     void setCrd(VecF<double> c);
     void addCnx(int cId);
     void addRing(int rId);
-    void setOrientation(int orientation, int latdim);
-    void clockwiseCnxs(int latdim);
-    void randomCnxs(int numCnxs, mt19937 &mtGen, int latdim);
+    void setOrientation(int orientation, int latdimX, int latdimY);
+    void clockwiseCnxs(int latdimX, int latdimY);
+    void randomCnxs(int numCnxs, mt19937 &mtGen, int latdimX, int latdimY);
     void randomCnxs(int numCnxs, VecF<int> pattern, mt19937 &mtGen);
     void bendorstraight(int dirs, int threecoordcount, int fourcoordcount, VecR<int> threecoord, VecR<int> fourcoord);
 

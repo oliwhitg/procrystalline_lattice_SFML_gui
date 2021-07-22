@@ -78,11 +78,11 @@ private:
 
     //Member functions
     void initialiseSqLattice(int dimX, int dimY, bool restart=false);
-    void initialiseTriLattice(int dimX, int dimY, bool restart=false);
-    void initialiseSnubSqLattice(int dimX, int dimY, bool restart=false);
-    void initialiseIsoSnubQuadLattice(int dimX, int dimY, bool restart=false);
-    void initialiseTriHexLattice(int dimX, int dimY, bool restart=false);
-    void initialiseHexLattice(int dimX, int dimY, bool restart=false);
+    void initialiseTriLattice(int dim, bool restart=false);
+    void initialiseSnubSqLattice(int dim, bool restart=false);
+    void initialiseIsoSnubQuadLattice(int dim, bool restart=false);
+    void initialiseTriHexLattice(int dim, bool restart=false);
+    void initialiseHexLattice(int dim, bool restart=false);
     void threeandfourcoords();
     void initialiseProLattice();
     int findRings();

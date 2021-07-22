@@ -74,11 +74,11 @@ void Lattice::initialise(string latType, int cnd, int latDimX, int latDimY, bool
     }
     //Make regular lattice
     if(latType=="sq") initialiseSqLattice(latDimX, latDimY,restart);
-    else if(latType=="tri") initialiseTriLattice(latDimX, latDimY,restart);
-    else if(latType=="snub") initialiseSnubSqLattice(latDimX, latDimY,restart);
-    else if(latType=="isosnub") initialiseIsoSnubQuadLattice(latDimX, latDimY,restart);
-    else if(latType=="trihex") initialiseTriHexLattice(latDimX, latDimY,restart);
-    else if(latType=="hex") initialiseHexLattice(latDimX, latDimY,restart);
+    else if(latType=="tri") initialiseTriLattice(latDimX,restart);
+    else if(latType=="snub") initialiseSnubSqLattice(latDimX, restart);
+    else if(latType=="isosnub") initialiseIsoSnubQuadLattice(latDimX, restart);
+    else if(latType=="trihex") initialiseTriHexLattice(latDimX,restart);
+    else if(latType=="hex") initialiseHexLattice(latDimX,restart);
 
     //Calculate ring coordinates
     for(int i=0; i<rings.n; ++i){
@@ -107,12 +107,12 @@ void Lattice::initialise(string latType, int cnd, int latDimX, int latDimY, bool
     //writeNetwork("./output/mc",-1);
 }
 
-void Lattice::initialiseSqLattice(int dim, bool restart) {
+void Lattice::initialiseSqLattice(int dimX, int dimY, bool restart) {
     //Initialise square lattice, either from scratch or restarting previous run
 
     //Initialise nodes and rings
     latticeCnd = 4;
-    int dimSq = dim*dim;
+    int dimSq = dimX*dimY;
     if(restart) {
         for(int i=0; i<nodes.n; ++i) nodes[i].resetRings();
     }
@@ -122,7 +122,7 @@ void Lattice::initialiseSqLattice(int dim, bool restart) {
 
         for(int i=0; i<dimSq; ++i) {
             nodes.addValue(Node(latticeCnd, fractionLlinear));
-            pipes.addValue(pipe(latticeDim));
+            pipes.addValue(pipe(latticeDimX, latticeDimY));
             pipe &p = pipes[i];
             p.setCnxs(nodes[i].cnxs);
             p.cnxstodirs();
@@ -132,17 +132,17 @@ void Lattice::initialiseSqLattice(int dim, bool restart) {
     }
     Ring::autoId = 0;
     rings = VecR<Ring>(0,dimSq+(latticeCnd-nodeCnd)*dimSq);
-    for(int i=0; i<dimSq; ++i) rings.addValue(Ring(4*dim));
-    periodicity = dim;
+    for(int i=0; i<dimSq; ++i) rings.addValue(Ring(4*dimX));
+    periodicity = dimX;
 
     //Make coordinates and allowed node connections if not previously
     if(!restart) {
         //Make coordinates
         VecF<double> crd(2);
         int id=0;
-        for(int y=0; y<dim; ++y) {
+        for(int y=0; y<dimY; ++y) {
             crd[1]=y;
-            for(int x=0; x<dim; ++x) {
+            for(int x=0; x<dimX; ++x) {
                 crd[0]=x;
                 nodes[id].setCrd(crd);
                 ++id;
@@ -152,15 +152,15 @@ void Lattice::initialiseSqLattice(int dim, bool restart) {
         //Make node connections
         id=0;
         int cnx;
-        for(int y=0; y<dim; ++y){
-            for(int x=0; x<dim; ++x){
-                cnx = y * dim + (id + dim - 1) % dim;
+        for(int y=0; y<dimY; ++y){
+            for(int x=0; x<dimX; ++x){
+                cnx = y * dimX + (id + dimX - 1) % dimX;
                 nodes[id].addCnx(cnx);
-                cnx = (id + dim) % dimSq;
+                cnx = (id + dimX) % dimSq;
                 nodes[id].addCnx(cnx);
-                cnx = y * dim + (id + 1) % dim;
+                cnx = y * dimX + (id + 1) % dimX;
                 nodes[id].addCnx(cnx);
-                cnx = (id + dimSq - dim) % dimSq;
+                cnx = (id + dimSq - dimX) % dimSq;
                 nodes[id].addCnx(cnx);
                 id += 1;
             }
@@ -169,15 +169,15 @@ void Lattice::initialiseSqLattice(int dim, bool restart) {
 
     //Associate rings to nodes
     int id=0,ring;
-    for(int y=0; y<dim; ++y){
-        for(int x=0; x<dim; ++x){
+    for(int y=0; y<dimY; ++y){
+        for(int x=0; x<dimX; ++x){
             ring = id;
             nodes[id].addRing(ring);
-            ring = y * dim + (id + 1) % dim;
+            ring = y * dimX + (id + 1) % dimX;
             nodes[id].addRing(ring);
-            ring=((y * dim + (id + 1) % dim) + dimSq - dim) % dimSq;
+            ring=((y * dimX + (id + 1) % dimX) + dimSq - dimX) % dimSq;
             nodes[id].addRing(ring);
-            ring=(id + dimSq - dim) % dimSq;
+            ring=(id + dimSq - dimX) % dimSq;
             nodes[id].addRing(ring);
             id += 1;
         }
@@ -1081,9 +1081,9 @@ void Lattice::threeandfourcoords() {
 
 
 //        cout << "CHECK FILE LENGTH" << endl;
-        if (latticeDim*latticeDim != numberlines){
+        if (latticeDimX*latticeDimY != numberlines){
             cout << "INPUT FILE HAS DIFFERENT DIMENSIONS TO EXPECTED" << endl;
-            latticeDim = sqrt(numberlines);
+//            latticeDim = sqrt(numberlines);
             cout << "DIMENSIONS UPDATED but THIS WILL BREAK due to node properties" << endl;
         }
         else{

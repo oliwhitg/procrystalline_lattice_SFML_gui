@@ -64,9 +64,10 @@ void Node::addRing(int rId) {
 //}
 
 
-void Node::setOrientation(int orientation, int latdim){
+void Node::setOrientation(int orientation, int latdimX, int latdimY){
     if (cnxs.n==3){
-        latticedim = latdim;
+        latticedimX = latdimX;
+        latticedimY = latdimY;
 
         int dummy1,dummy2,dummy3,dummy4;
         int dummysum;
@@ -78,26 +79,27 @@ void Node::setOrientation(int orientation, int latdim){
         dummy2 = allowedCnxs[1] - id;
         dummy3 = allowedCnxs[2] - id;
         dummy4 = allowedCnxs[3] - id;
-        dummysum = (dummy1+dummy2+dummy3+dummy4)/latticedim;
+        dummysum = (dummy1+dummy2+dummy3+dummy4)/latticedimX;
 
         VecR<int>dummy(4);
         dummy[0]=dummy1;
         dummy[1]=dummy2;
         dummy[2]=dummy3;
         dummy[3]=dummy4;
+        // Central Nodes
         if (dummysum==0){
 //        cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^ 4 "  << endl;
             for (int j=0;j<4;j++){
                 if (dummy[j]==-1){
                     A=j;
                 }
-                else if (dummy[j]==latticedim){
+                else if (dummy[j]==latticedimX){
                     D=j;
                 }
                 else if (dummy[j]==1){
                     B=j;
                 }
-                else if (dummy[j]==-latticedim){
+                else if (dummy[j]==-latticedimX){
                     C=j;
                 }
                 else {
@@ -107,20 +109,21 @@ void Node::setOrientation(int orientation, int latdim){
         }
         else if (dummysum > 0) {
             // 1,2,3,6
+            // Left Edge
             if (dummysum == 1) {
 //            cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^ 6 "  << endl;
                 //A
                 for (int j=0;j<4;j++){
-                    if (dummy[j]==latticedim-1){
+                    if (dummy[j]==latticedimX-1){
                         A=j;
                     }
-                    else if (dummy[j]==-latticedim){
+                    else if (dummy[j]==latticedimX){
                         D=j;
                     }
                     else if (dummy[j]==1){
                         B=j;
                     }
-                    else if (dummy[j]==latticedim){
+                    else if (dummy[j]==-latticedimX){
                         C=j;
                     }
                     else {
@@ -128,19 +131,20 @@ void Node::setOrientation(int orientation, int latdim){
                     }
                 }
             }
-            else if (dummysum == latticedim-1){
+            // Bottom Right Edge
+            else if (dummysum == latticedimX-1){
 //            cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^ 1 "  << endl;
                 for (int j=0;j<4;j++){
                     if (dummy[j]==-1){
                         A=j;
                     }
-                    else if (dummy[j]==latticedim){
+                    else if (dummy[j]==latticedimX){
                         D=j;
                     }
-                    else if (dummy[j]==1-latticedim){
+                    else if (dummy[j]==1-latticedimX){
                         B=j;
                     }
-                    else if (dummy[j]==latticedim*(latticedim-1)){
+                    else if (dummy[j]==latticedimX*(latticedimY-1)){
                         C=j;
                     }
                     else {
@@ -149,19 +153,20 @@ void Node::setOrientation(int orientation, int latdim){
                     }
                 }
             }
-            else if (dummysum == latticedim){
+            // Bottom Edge
+            else if (dummysum == latticedimX){
 //            cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^ 2 "  << endl;
                 for (int j=0;j<4;j++){
                     if (dummy[j]==-1){
                         A=j;
                     }
-                    else if (dummy[j]==latticedim){
+                    else if (dummy[j]==latticedimX){
                         D=j;
                     }
                     else if (dummy[j]==1){
                         B=j;
                     }
-                    else if (dummy[j]==latticedim*(latticedim-1)){
+                    else if (dummy[j]==latticedimX*(latticedimY-1)){
                         C=j;
                     }
                     else {
@@ -170,19 +175,20 @@ void Node::setOrientation(int orientation, int latdim){
                 }
 
             }
-            else if (dummysum == latticedim+1){
+            // Bottom Left Edge
+            else if (dummysum == latticedimX+1){
 //            cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^ 3 "  << endl;
                 for (int j=0;j<4;j++){
-                    if (dummy[j]==latticedim-1){
+                    if (dummy[j]==latticedimX-1){
                         A=j;
                     }
-                    else if (dummy[j]==latticedim){
+                    else if (dummy[j]==latticedimX){
                         D=j;
                     }
                     else if (dummy[j]==1){
                         B=j;
                     }
-                    else if (dummy[j]==latticedim*(latticedim-1)){
+                    else if (dummy[j]==latticedimX*(latticedimY-1)){
                         C=j;
                     }
                     else {
@@ -191,21 +197,23 @@ void Node::setOrientation(int orientation, int latdim){
                 }
             }
         }
+
         else {
             // 5,7,8,9
+            //  Right Edge
             if (dummysum == -1) {
 //            cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^ 5 "  << endl;
                 for (int j=0;j<4;j++){
                     if (dummy[j]==-1){
                         A=j;
                     }
-                    else if (dummy[j]==latticedim){
+                    else if (dummy[j]==latticedimX){
                         D=j;
                     }
-                    else if (dummy[j]==1-latticedim){
+                    else if (dummy[j]==1-latticedimX){
                         B=j;
                     }
-                    else if (dummy[j]==-latticedim){
+                    else if (dummy[j]==-latticedimX){
                         C=j;
                     }
                     else {
@@ -213,19 +221,20 @@ void Node::setOrientation(int orientation, int latdim){
                     }
                 }
             }
-            else if (dummysum == 1-latticedim){
+            //  Top Right
+            else if (dummysum == 1-latticedimX){
 //            cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^ 9 "  << endl;
                 for (int j=0;j<4;j++){
-                    if (dummy[j]==latticedim-1){
+                    if (dummy[j]==latticedimX-1){
                         A=j;
                     }
-                    else if (dummy[j]==-latticedim*(latticedim-1)){
+                    else if (dummy[j]==-latticedimX*(latticedimY-1)){
                         D=j;
                     }
                     else if (dummy[j]==1){
                         B=j;
                     }
-                    else if (dummy[j]==-latticedim){
+                    else if (dummy[j]==-latticedimX){
                         C=j;
                     }
                     else {
@@ -234,19 +243,19 @@ void Node::setOrientation(int orientation, int latdim){
                     }
                 }
             }
-            else if (dummysum == -latticedim){
+            else if (dummysum == -latticedimX){
 //            cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^ 8 "  << endl;
                 for (int j=0;j<4;j++){
                     if (dummy[j]==-1){
                         A=j;
                     }
-                    else if (dummy[j]==-latticedim*(latticedim-1)){
+                    else if (dummy[j]==-latticedimX*(latticedimY-1)){
                         D=j;
                     }
                     else if (dummy[j]==1){
                         B=j;
                     }
-                    else if (dummy[j]==-latticedim){
+                    else if (dummy[j]==-latticedimX){
                         C=j;
                     }
                     else {
@@ -254,19 +263,19 @@ void Node::setOrientation(int orientation, int latdim){
                     }
                 }
             }
-            else if (dummysum == -latticedim-1){
+            else if (dummysum == -latticedimX-1){
 //            cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^ 7 "  << endl;
                 for (int j=0;j<4;j++){
                     if (dummy[j]==-1){
                         A=j;
                     }
-                    else if (dummy[j]==-latticedim*(latticedim-1)){
+                    else if (dummy[j]==-latticedimX*(latticedimY-1)){
                         D=j;
                     }
-                    else if (dummy[j]==1-latticedim){
+                    else if (dummy[j]==1-latticedimX){
                         B=j;
                     }
-                    else if (dummy[j]==-latticedim){
+                    else if (dummy[j]==-latticedimX){
                         C=j;
                     }
                     else {
@@ -1350,9 +1359,9 @@ int energytot(VecR<pipe> pipes, int latdimX, int latdimY){
     int nX = latdimX;
     int nY = latdimY;
     int e = 0;
-    for (int i = 0; i < N * N; i++) {
-        int x = int(i % N);
-        int y = (int((i - x) / N));
+    for (int i = 0; i < nX * nY; i++) {
+        int x = int(i % nX);
+        int y = (int((i - x) / nX));
         pipe &p = pipes[i];
 
         //
@@ -1364,9 +1373,9 @@ int energytot(VecR<pipe> pipes, int latdimX, int latdimY){
 
         int ev = 0;
         for(auto d:DIR) {
-            if (pipes[v.x+N*v.y].isConnect(d)) {
-                Vector2i neighbourpos = putin(v+d, N);
-                if (!pipes[neighbourpos.x+N*neighbourpos.y].isConnect(-d)){
+            if (pipes[v.x+nX*v.y].isConnect(d)) {
+                Vector2i neighbourpos = putin(v+d, nX, nY);
+                if (!pipes[neighbourpos.x+nX*neighbourpos.y].isConnect(-d)){
                     ev +=1;
                 }
             }
@@ -1381,13 +1390,14 @@ int energytot(VecR<pipe> pipes, int latdimX, int latdimY){
 }
 
 int energyVector(Vector2i v, VecR<pipe> pipes, int latdimX, int latdimY){
-    int N = latdim;
+    int nX = latdimX;
+    int nY = latdimY;
     int ev = 0;
     for(auto d:DIR) {
-        if (pipes[v.x+N*v.y].isConnect(d)) {
+        if (pipes[v.x+nX*v.y].isConnect(d)) {
 //        if (cell(v, grid).isConnect(d)) {
-            Vector2i neighbourpos = putin(v+d, N);
-            if (!pipes[neighbourpos.x+N*neighbourpos.y].isConnect(-d)){
+            Vector2i neighbourpos = putin(v+d, nX, nY);
+            if (!pipes[neighbourpos.x+nX*neighbourpos.y].isConnect(-d)){
 //            if (!cell(neighbourpos, grid).isConnect(-d)) {
                 ev +=1;
             }
@@ -1397,21 +1407,22 @@ int energyVector(Vector2i v, VecR<pipe> pipes, int latdimX, int latdimY){
 }
 
 vector<int> neighbours(int node, vector<int> display, int latdimX, int latdimY){
-    int N = latdim;
-    int nodex = int ((node) % N);
-    int nodey = (int((node - nodex) / N));
+    int nX = latdimX;
+    int nY = latdimY;
+    int nodex = int ((node) % nX);
+    int nodey = (int((node - nodex) / nX));
     vector <int> next;
-    if (nodex!=N-1) next.push_back(node+1);
-    else next.push_back(node-(N-1));
+    if (nodex!=nX-1) next.push_back(node+1);
+    else next.push_back(node-(nX-1));
 
     if (nodex!=0) next.push_back(node-1);
-    else next.push_back(node+(N-1));
+    else next.push_back(node+(nX-1));
 
-    if (nodey!=N-1) next.push_back(node+N);
+    if (nodey!=nX-1) next.push_back(node+nX);
     else next.push_back(nodex);
 
-    if (nodey!=0) next.push_back(node-N);
-    else next.push_back((N-1)*N+nodex);
+    if (nodey!=0) next.push_back(node-nX);
+    else next.push_back((nX-1)*nX+nodex);
     for (int j=0;j<next.size();j++){
         bool check = true;
         for (int i=0;i<display.size();i++){
@@ -1424,8 +1435,8 @@ vector<int> neighbours(int node, vector<int> display, int latdimX, int latdimY){
     return display;
 };
 
-bool isOut(Vector2i v, int latdim) {
-    return !IntRect(0, 0, latdim, latdim).contains(v);
+bool isOut(Vector2i v, int latdimX, int latdimY) {
+    return !IntRect(0, 0, latdimX, latdimY).contains(v);
 }
 
 
