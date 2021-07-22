@@ -1094,13 +1094,14 @@ int pipe::autoId = 0;
 
 pipe::pipe() {}
 
-pipe::pipe(int latdim) {
-    latticedim = latdim;
+pipe::pipe(int latdimX, int latdimY) {
+    latticedimX = latdimX;
+    latticedimY = latdimY;
     angle=0;
     id=pipe::autoId;
     ++pipe::autoId;
-    crds.x = int(id%latticedim);
-    crds.y = int((id-crds.x)/latticedim);
+    crds.x = int(id%latticedimX);
+    crds.y = int((id-crds.x)/latticedimY);
 
     //replacement for 3 coords
     if ((crds.x+crds.y)%2==0){
@@ -1122,13 +1123,14 @@ void pipe::rotate() {
     }
 };
 
-Vector2i putin(Vector2i neighbourpos, int latdim) {
-    int N = latdim;
+Vector2i putin(Vector2i neighbourpos, int latdimX, int latdimY) {
+    int nX = latdimX;
+    int nY = latdimY;
     //potential neighbour position, given vy v+d
-    if (neighbourpos.x<0) neighbourpos.x+=(N);
-    else if (neighbourpos.x>N-1) neighbourpos.x -=(N);
-    if (neighbourpos.y<0) neighbourpos.y+=(N);
-    else if (neighbourpos.y>N-1) neighbourpos.y-=(N);
+    if (neighbourpos.x<0) neighbourpos.x+=(nX);
+    else if (neighbourpos.x>nX-1) neighbourpos.x -=(nX);
+    if (neighbourpos.y<0) neighbourpos.y+=(nY);
+    else if (neighbourpos.y>nY-1) neighbourpos.y-=(nY);
     return neighbourpos;
 }
 
@@ -1237,43 +1239,44 @@ void pipe::setCnxs(VecR<int> Nodecnxs) {
     }
 }
 void pipe::cnxstodirs(){
-    int N;
-    N = latticedim;
+    int nX, nY;
+    nX = latticedimX;
+    nY = latticedimY;
 //    cout << "Call cnxstodirs" << endl;
     int connection_sum=0;
 //    cout << "ID : " << id << endl;
     dirs = VecR<Vector2i>(cnxs.n, cnxs.n);
-    for (int z=0; z<cnxs.n; z++){connection_sum+=(cnxs[z]-id)/N;}
+    for (int z=0; z<cnxs.n; z++){connection_sum+=(cnxs[z]-id)/nX;}
 //    cout << "CONNECTION SUM : " << connection_sum << " from " << cnxs.n << " cnxs" << endl;
     for (int z=0; z<cnxs.n; z++){
         int corrected_cnx = cnxs[z]-id;
 //        cout << z << "    -> " << corrected_cnx << endl;
         //A
-        if (corrected_cnx==-1 || corrected_cnx==N-1){dirs[z]=Left;}
+        if (corrected_cnx==-1 || corrected_cnx==nX-1){dirs[z]=Left;}
             //B
-        else if (corrected_cnx==1 || corrected_cnx==1-N){dirs[z]=Right;}
+        else if (corrected_cnx==1 || corrected_cnx==1-nX){dirs[z]=Right;}
             //C&D
         else if (connection_sum==0) {
 //            cout << "sum =0" << endl;
             //C
-            if (corrected_cnx == -N) { dirs[z] = Up; }
+            if (corrected_cnx == -nX) { dirs[z] = Up; }
                 //D
-            else if (corrected_cnx == N) { dirs[z] = Down; }
+            else if (corrected_cnx == nX) { dirs[z] = Down; }
         }
         else if (connection_sum > 0){
 //            cout << "sum >0" << endl;
             if (connection_sum==1) {
                 //C
-                if (corrected_cnx == -N) { dirs[z] = Up; }
+                if (corrected_cnx == -nX) { dirs[z] = Up; }
                     //D
-                else if (corrected_cnx == N) { dirs[z] = Down; }
+                else if (corrected_cnx == nX) { dirs[z] = Down; }
             }
-            else if (connection_sum==N-1 || connection_sum==N || connection_sum==N+1) {
+            else if (connection_sum==nX-1 || connection_sum==nX || connection_sum==nX+1) {
 //                cout << "catch 1 " << corrected_cnx/N << endl;
                 //C
-                if (corrected_cnx == N*(N-1)) { dirs[z] = Up; }
+                if (corrected_cnx == nX*(nX-1)) { dirs[z] = Up; }
                     //D
-                else if (corrected_cnx == N) { dirs[z] = Down; }
+                else if (corrected_cnx == nX) { dirs[z] = Down; }
 
 //                else {cout << "catch Failed" << endl;}
             }
@@ -1282,16 +1285,16 @@ void pipe::cnxstodirs(){
 //            cout << "sum <0" << endl;
             if (connection_sum==-1) {
                 //C
-                if (corrected_cnx == -N) { dirs[z] = Up; }
+                if (corrected_cnx == -nX) { dirs[z] = Up; }
                     //D
-                else if (corrected_cnx == N) { dirs[z] = Down; }
+                else if (corrected_cnx == nX) { dirs[z] = Down; }
             }
-            else if (connection_sum==1-N || connection_sum==-N || connection_sum==-N-1) {
+            else if (connection_sum==1-nX || connection_sum==-nX || connection_sum==-nX-1) {
 //                cout << "catch 1 " << corrected_cnx/N << endl;
                 //C
-                if (corrected_cnx == -N*(N-1)) { dirs[z] = Up; }
+                if (corrected_cnx == -nX*(nX-1)) { dirs[z] = Up; }
                     //D
-                else if (corrected_cnx == -N) { dirs[z] = Down; }
+                else if (corrected_cnx == -nX) { dirs[z] = Down; }
 //                else {cout << "catch Failed" << endl;}
             }
         }
@@ -1315,19 +1318,20 @@ void pipe::setAngle(){
     if (angle > orientation * 90) angle = orientation * 90;
 }
 
-int pipe::energynode(VecR<pipe> pipes, int latdim) {
+int pipe::energynode(VecR<pipe> pipes, int latdimX, int latdimY) {
     Vector2i v;
-    latticedim = latdim;
-    v.x=int(id%latticedim);
-    v.y=int((id-v.x)/latticedim);
+    latticedimX = latdimX;
+    latticedimY = latdimY;
+    v.x=int(id%latticedimX);
+    v.y=int((id-v.x)/latticedimY);
 
     int ev = 0;
     for(auto d:DIR) {
 //        if (cell(v, grid).isConnect(d)) {
-        if (pipes[v.x+latticedim*v.y].isConnect(d)) {
-            Vector2i neighbourpos = putin(v+d, latticedim);
+        if (pipes[v.x+latticedimX*v.y].isConnect(d)) {
+            Vector2i neighbourpos = putin(v+d, latticedimX, latticedimY);
 //            if (!cell(neighbourpos, grid).isConnect(-d)) {
-            if (!pipes[neighbourpos.x+latticedim*neighbourpos.y].isConnect(-d)){
+            if (!pipes[neighbourpos.x+latticedimX*neighbourpos.y].isConnect(-d)){
                 ev +=1;
             }
         }
@@ -1342,8 +1346,9 @@ string pipe::orientationstring(){
     return s;
 }
 
-int energytot(VecR<pipe> pipes, int latdim){
-    int N = latdim;
+int energytot(VecR<pipe> pipes, int latdimX, int latdimY){
+    int nX = latdimX;
+    int nY = latdimY;
     int e = 0;
     for (int i = 0; i < N * N; i++) {
         int x = int(i % N);
@@ -1375,7 +1380,7 @@ int energytot(VecR<pipe> pipes, int latdim){
     return e;
 }
 
-int energyVector(Vector2i v, VecR<pipe> pipes, int latdim){
+int energyVector(Vector2i v, VecR<pipe> pipes, int latdimX, int latdimY){
     int N = latdim;
     int ev = 0;
     for(auto d:DIR) {
@@ -1391,7 +1396,7 @@ int energyVector(Vector2i v, VecR<pipe> pipes, int latdim){
     return ev;
 }
 
-vector<int> neighbours(int node, vector<int> display, int latdim){
+vector<int> neighbours(int node, vector<int> display, int latdimX, int latdimY){
     int N = latdim;
     int nodex = int ((node) % N);
     int nodey = (int((node - nodex) / N));

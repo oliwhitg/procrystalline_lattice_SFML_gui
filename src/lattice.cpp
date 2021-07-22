@@ -24,7 +24,7 @@ Lattice::Lattice(int seed) {
 }
 
 
-void Lattice::initialise(string latType, int cnd, int latDim, bool pat, float fracH, float fracordH, float fracL, float fracordL, int useL, float fracLlin, int usearr, string secinpt, string outfol, VecF<int> patR, VecF<int> patL, string prefix, int outSty,
+void Lattice::initialise(string latType, int cnd, int latDimX, int latDimY, bool pat, float fracH, float fracordH, float fracL, float fracordL, int useL, float fracLlin, int usearr, string secinpt, string outfol, VecF<int> patR, VecF<int> patL, string prefix, int outSty,
                          bool restart, bool crystal, bool envs) {
     //Initialise lattice
 
@@ -44,7 +44,8 @@ void Lattice::initialise(string latType, int cnd, int latDim, bool pat, float fr
     outputPrefix = prefix;
     outputfolder = outfol;
 
-    latticeDim = latDim;
+    latticeDimX = latDimX;
+    latticeDimY = latDimY;
 
     lengthavaliablenodes = 0;
 
@@ -72,12 +73,12 @@ void Lattice::initialise(string latType, int cnd, int latDim, bool pat, float fr
         calcChains=true;
     }
     //Make regular lattice
-    if(latType=="sq") initialiseSqLattice(latDim,restart);
-    else if(latType=="tri") initialiseTriLattice(latDim,restart);
-    else if(latType=="snub") initialiseSnubSqLattice(latDim,restart);
-    else if(latType=="isosnub") initialiseIsoSnubQuadLattice(latDim,restart);
-    else if(latType=="trihex") initialiseTriHexLattice(latDim,restart);
-    else if(latType=="hex") initialiseHexLattice(latDim,restart);
+    if(latType=="sq") initialiseSqLattice(latDimX, latDimY,restart);
+    else if(latType=="tri") initialiseTriLattice(latDimX, latDimY,restart);
+    else if(latType=="snub") initialiseSnubSqLattice(latDimX, latDimY,restart);
+    else if(latType=="isosnub") initialiseIsoSnubQuadLattice(latDimX, latDimY,restart);
+    else if(latType=="trihex") initialiseTriHexLattice(latDimX, latDimY,restart);
+    else if(latType=="hex") initialiseHexLattice(latDimX, latDimY,restart);
 
     //Calculate ring coordinates
     for(int i=0; i<rings.n; ++i){
@@ -3490,9 +3491,10 @@ void Lattice::writeNetwork(string prefix, int index) {
 
 void Lattice::Monolayer(string prefix){
     cout << " ##### Starting Monolayer" << endl;
-    float si_si_distance = 2.0*cos((19.5/180)*M_PI)*1.609;
-    float si_o_distance = si_si_distance/2.0;
-    float o_o_distance =  1.609*sqrt(6)/4;
+    float si_si_distance = 1.609* sqrt((32.0/9.0));
+    cout << "sisi    " << si_si_distance << endl;
+//    float si_o_distance = si_si_distance/2.0;
+    float o_o_distance =  1.609*sqrt((8.0/3.0));
     float h = sin((19.5/180)*M_PI)*1.609;
 
 
@@ -3542,14 +3544,14 @@ void Lattice::Monolayer(string prefix){
     }
 
     double dim_x, dim_y;
-    dim_x = (latticeDim*1.5-0.5)*si_si_distance;
-    dim_y = (latticeDim*0.5)*sqrt(3)*si_si_distance;
+    dim_x = (latticeDim*1.5)*si_si_distance;
+    dim_y = (latticeDim*0.5)*sqrt(3.0)*si_si_distance;
     OutputFile dimFile(newoutputPrefixfolder+"/dimensions.dat");
     dimFile.initVariables(8,3,60,15);
-    dimFile.write(dim_x*dim_y);
+    dimFile.write(0.5*latticeDim*latticeDim*1.5*sqrt(3.0)*si_si_distance*si_si_distance);
     dimFile.write(dim_x);
     dimFile.write(dim_y);
-
+    dimFile.write(0.5*latticeDim*latticeDim*1.5*sqrt(3.0)*si_si_distance*si_si_distance / (dim_x*dim_y));
     OutputFile crysFile(newoutputPrefixfolder+"/crys.crds");
     OutputFile harmpairsFile(newoutputPrefixfolder+"/harmpairs.dat");
 
@@ -3623,12 +3625,12 @@ void Lattice::Monolayer(string prefix){
                 if (diff[1] > mic) diff[1] -= latticeDim;
                 else if (diff[1] < -mic) diff[1] += latticeDim;
 
-                O[0] = (nodes[i].crd[0] + diff[0] / 2) * si_si_distance;
+                O[0] = (nodes[i].crd[0] + diff[0] / 2.) * si_si_distance;
 
                 if (O[0]<0) O[0] += si_si_distance*latticeDim;
                 else if (O[0]>si_si_distance*latticeDim) O[0] -= si_si_distance*latticeDim;
 
-                O[1] = (nodes[i].crd[1] + diff[1] / 2) * si_si_distance;
+                O[1] = (nodes[i].crd[1] + diff[1] / 2.) * si_si_distance;
 
                 if (O[1]<0) O[1] += si_si_distance*latticeDim;
                 else if (O[1]>si_si_distance*latticeDim) O[1] -= si_si_distance*latticeDim;
@@ -3823,6 +3825,68 @@ void Lattice::Monolayer(string prefix){
             }
         }
     }
+
+
+    cout << "##### OPTIMISE_SILICA_INPUT" << endl;
+    OutputFile optimise_silica_File(newoutputPrefixfolder+"/optimise_silica.inpt");
+    optimise_silica_File.initVariables(6,3,60,12);
+    //
+    optimise_silica_File.write("I/O");
+    optimise_silica_File.write("./crys.crds              input coordinates");
+    optimise_silica_File.write("./harmpairs.dat              input harmonic pairs");
+    optimise_silica_File.write("./lj_pairs.dat              input repulsive pairs");
+    optimise_silica_File.write("./fixedz.dat              input fixed z atoms");
+    optimise_silica_File.write("./test                              output prefix");
+    optimise_silica_File.write("-----------------------------------------------------------");
+    optimise_silica_File.write("Restart Options");
+    optimise_silica_File.write("0               print restart file");
+    optimise_silica_File.write("0               restart run?");
+    optimise_silica_File.write("-----------------------------------------------------------");
+    optimise_silica_File.write("Sample Information");
+    optimise_silica_File.write("800                 number Si atoms");
+    optimise_silica_File.write("1               stretch x");
+    optimise_silica_File.write("1               stretch y");
+    optimise_silica_File.write("0               stretch z");
+    optimise_silica_File.write("45              central angle");
+    optimise_silica_File.write("0              scan angle");
+    optimise_silica_File.write(dim_x);
+    optimise_silica_File.write(dim_y);
+    optimise_silica_File.write("20              unit cell z");
+    optimise_silica_File.write("-----------------------------------------------------------");
+    optimise_silica_File.write("Geometry Optimisation");
+    optimise_silica_File.write("1                   resize(1/0)");
+    optimise_silica_File.write("1.300               starting volume (relative to reference)");
+    optimise_silica_File.write("0.900               final volume (relative to reference)");
+    optimise_silica_File.write("401                   number of volumes to analyse");
+    optimise_silica_File.write("20                  samples per volume");
+    optimise_silica_File.write(dim_x);
+    optimise_silica_File.write(dim_y);
+    optimise_silica_File.write("20                  unit cell z reference");
+    optimise_silica_File.write("10000000             max steps iterations steepest descent (per area)");
+    optimise_silica_File.write("0.5                 Armijo backtracking constant");
+    optimise_silica_File.write("1e-9                convergence tolerance");
+    optimise_silica_File.write("-----------------------------------------------------------");
+    optimise_silica_File.write("Potential Model");
+    optimise_silica_File.write("1                   turn on harmonic interactions (1/0)");
+    optimise_silica_File.write("1.609               harmonic Si-O r0");
+    optimise_silica_File.write("1                   harmonic Si-O k");
+    optimise_silica_File.write("1                   harmonic O-O k");
+    optimise_silica_File.write("0                   turn on SiSi harmonics (1/0)");
+    optimise_silica_File.write("0                   harmonic Si-Si r0");
+    optimise_silica_File.write("0                   harmonic Si-Si k");
+    optimise_silica_File.write("0                   turn on 24-12 repulsions (1/0)");
+    optimise_silica_File.write("2.4                 repulsive r0");
+    optimise_silica_File.write("0.25                repulsive k");
+    optimise_silica_File.write("0                   turn on z fixing (1/0)");
+    optimise_silica_File.write("1                   turn on multicore optimisation");
+    optimise_silica_File.write("0                   Parallelise Sample");
+    optimise_silica_File.write("1                   Parallelise Area");
+    optimise_silica_File.write("1                   number of cores");
+    optimise_silica_File.write("0                   turn on cuda");
+    optimise_silica_File.write("-----------------------------------------------------------");
+    //
+
+
     cout << "FINISHED" << endl;
 
 }

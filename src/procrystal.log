@@ -1,4 +1,4 @@
-Simulation begun at: Sun Jun 20 16:04:18 2021
+Simulation begun at: Wed Jul 14 13:31:25 2021
 Procrystal Monte Carlo
 Written By: David OM, Wilson Group, 2019
 ------------------------------------------------------------
@@ -7,7 +7,7 @@ Reading input file parameters
         Lattice type: sq
         Node coordination: 3
         Random links selected
-        Lattice dimension: 40
+        Lattice dimension: 20
         Fraction N+1: 0.00000000
         Fraction N+1 Ordered: 1.00000000
         Fraction N-1: 0.00000000
@@ -32,9 +32,9 @@ Reading input file parameters
         RDF delta:  0.02000000
         Calculate and write structure factor:  0
         Sk delta  0.01000000
-        Sk max n  32766
+        Sk max n  0
 ------------------------------------------------------------
 Procrystal Generation - Monte Carlo
     Sample 0 generated in 10 iterations
 ------------------------------------------------------------
-Duration: 0.35000000 minutes
+Duration: 0.03333333 minutes

@@ -37,7 +37,7 @@ int main() {
     string linkType; //whether links random or patterned
     bool linkPattern=false; //whether pattern selected
     VecF<int> patternR, patternL; //right and left patterns
-    int latticeDim; //lattice dimension
+    int latticeDimX, latticeDimY; //lattice dimensions
     logfile.write("Reading procrystal parameters");
     ++logfile.currIndent;
     for(int i=0; i<3; ++i) getline(inputFile,skip);
@@ -68,9 +68,19 @@ int main() {
         logfile.write("Link pattern selected");
     }
     else logfile.write("Random links selected");
+
+    //
     getline(inputFile,line);
-    istringstream(line)>>latticeDim;
-    logfile.write("Lattice dimension:",latticeDim);
+    istringstream(line)>>latticeDimX;
+
+    getline(inputFile,line);
+    istringstream(line)>>latticeDimY;
+    //
+
+    logfile.write("Lattice dimension X:",latticeDimX);
+
+    logfile.write("Lattice dimension Y:",latticeDimY);
+
     getline(inputFile,line);
     istringstream(line)>>fractionH;
     logfile.write("Fraction N+1:",fractionH);
@@ -174,7 +184,7 @@ int main() {
     //outstyle =
     //outprefix =
 
-    sampler.setProcrystal(latticeType,nodeCnd,linkPattern,patternR,patternL,latticeDim, fractionH, fractionorderedH, fractionL, fractionorderedL, useLlinear, fractionLlinear, usearray, secondaryinputFile, outputfolder);
+    sampler.setProcrystal(latticeType,nodeCnd,linkPattern,patternR,patternL,latticeDimX, latticeDimY, fractionH, fractionorderedH, fractionL, fractionorderedL, useLlinear, fractionLlinear, usearray, secondaryinputFile, outputfolder);
     sampler.setMonteCarlo(randomSeed,temperature,samples, mcswitch, maxTry);
     sampler.setOutput(outStyle,outPrefix,writeSamples,writeEnvironments,writeRDFs,rdfDelta,writeSk,skDelta,skMaxN);
 

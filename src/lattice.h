@@ -29,7 +29,7 @@ class Lattice {
 private:
 
     //Data members
-    int latticeDim;
+    int latticeDimX, latticeDimY;
     int latticeCnd,nodeCnd;
     bool pattern;
     float fractionH, fractionorderedH, fractionL, fractionorderedL, fractionLlinear;
@@ -38,7 +38,7 @@ private:
     VecR<Node> nodes;
     VecR<pipe> pipes;
     pipe& cell(Vector2i v){
-        int ref = v.x+latticeDim*v.y;
+        int ref = v.x+latticeDimX*v.y;
         return pipes[ref];
     }
     VecR<Ring> rings;
@@ -77,12 +77,12 @@ private:
     string outputPrefix;
 
     //Member functions
-    void initialiseSqLattice(int dim, bool restart=false);
-    void initialiseTriLattice(int dim, bool restart=false);
-    void initialiseSnubSqLattice(int dim, bool restart=false);
-    void initialiseIsoSnubQuadLattice(int dim, bool restart=false);
-    void initialiseTriHexLattice(int dim, bool restart=false);
-    void initialiseHexLattice(int dim, bool restart=false);
+    void initialiseSqLattice(int dimX, int dimY, bool restart=false);
+    void initialiseTriLattice(int dimX, int dimY, bool restart=false);
+    void initialiseSnubSqLattice(int dimX, int dimY, bool restart=false);
+    void initialiseIsoSnubQuadLattice(int dimX, int dimY, bool restart=false);
+    void initialiseTriHexLattice(int dimX, int dimY, bool restart=false);
+    void initialiseHexLattice(int dimX, int dimY, bool restart=false);
     void threeandfourcoords();
     void initialiseProLattice();
     int findRings();
@@ -99,7 +99,7 @@ public:
     Lattice(int seed);
 
     //Member functions
-    void initialise(string latType, int cnd, int latDim, bool pat, float fracH, float fracordH, float fracL, float fracordL, int useL, float fracLlin, int usearr, string secinpt, string outfol, VecF<int> patR, VecF<int> patL, string prefix, int outsty, bool restart=false, bool crystal=false, bool envs=false);
+    void initialise(string latType, int cnd, int latDimX, int latDimY, bool pat, float fracH, float fracordH, float fracL, float fracordL, int useL, float fracLlin, int usearr, string secinpt, string outfol, VecF<int> patR, VecF<int> patL, string prefix, int outsty, bool restart=false, bool crystal=false, bool envs=false);
     VecF<int> new_generate(int maxIterations, double temperature, int mcswitch);
 
     VecF<int> generate(int maxIterations, double temperature, int mcswitch);
