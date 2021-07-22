@@ -5,7 +5,8 @@ sq          lattice type (sq/tri/snub/isosnub/trihex/hex)
 3           node coordination
 random      link orientations (random/pattern1/pattern2)
 1 1 0 0 1 0     pattern code
-40         lattice dimension
+20         lattice dimension x
+40         lattice dimension y
 0.00
 1.00       fraction of n+1 coordinate in order
 0.00

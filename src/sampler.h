@@ -25,7 +25,7 @@ private:
     string latticeType;
     bool pattern;
     VecF<int> patternR, patternL;
-    int latticeDim, nodeCnd;
+    int latticeDimX, latticeDimY, nodeCnd;
     float fractionH, fractionorderedH, fractionL, fractionorderedL, fractionLlinear;
     int usearray, useLlinear;
     string secondaryinputFile;
@@ -48,7 +48,7 @@ public:
 
     //Constructor and setters
     Sampler();
-    void setProcrystal(string latType, int cnd, bool pat, VecF<int> patR, VecF<int> patL, int latDim, float fracH, float fracordH, float fracL, float fracordL, int useL, float fracLlin, int usearr, string secinpt, string outfol);
+    void setProcrystal(string latType, int cnd, bool pat, VecF<int> patR, VecF<int> patL, int latDimX, int latDimY, float fracH, float fracordH, float fracL, float fracordL, int useL, float fracLlin, int usearr, string secinpt, string outfol);
     void setMonteCarlo(int seed, double temp, int samples, int mcsw, int maxTr);
     void setOutput(int outSty, string outPrefix, int write, int envs, int rdf, double delta,  int sk, double sdelta, int smaxn);
 

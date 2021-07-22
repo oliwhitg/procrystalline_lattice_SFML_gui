@@ -78,13 +78,13 @@ public:
     VecR<int>cnxs;
     int id;
     Vector2i crds;
-    int latticedim;
+    int latticedimX, latticedimY;
     int orientation; //orientation of nodes
     float angle; bool on;
 
 
     pipe();
-    pipe(int latdim);
+    pipe(int latdimX, int latdimY);
     void rotate();
     bool isConnect(Vector2i dir);
 
@@ -112,7 +112,7 @@ public:
 //        else return false;
 //    }
 
-    int energynode(VecR<pipe> pipes, int latdim);
+    int energynode(VecR<pipe> pipes, int latdimX, int latdimY);
 
 
 
@@ -122,9 +122,9 @@ public:
 //pipe grid[16][16];
 //pipe& cell(Vector2i v) {return grid[v.x][v.y];}
 //bool isOut(Vector2i v) {return !IntRect(0,0,16,16).contains(v);}
-Vector2i putin(Vector2i neighbourpos, int latdim);
-int energytot(VecR<pipe> pipes, int latdim);
-int energyVector(Vector2i v, VecR<pipe> pipes, int latdim);
-bool isOut(Vector2i v, int latdim);
-vector<int> neighbours(int node, vector<int> display, int latdim);
+Vector2i putin(Vector2i neighbourpos, int latdimX, int latdimY);
+int energytot(VecR<pipe> pipes, int latdimX, int latdimY);
+int energyVector(Vector2i v, VecR<pipe> pipes, int latdimX, int latdimY);
+bool isOut(Vector2i v, int latdimX, int latdimY);
+vector<int> neighbours(int node, vector<int> display, int latdimX, int latdimY);
 #endif //PROCRYSTAL_NODE_H

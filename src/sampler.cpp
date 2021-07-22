@@ -5,7 +5,7 @@ Sampler::Sampler() {
 }
 
 
-void Sampler::setProcrystal(string latType, int cnd, bool pat, VecF<int> patR, VecF<int> patL, int latDim, float fracH, float fracordH, float fracL, float fracordL, int useL, float fracLlin, int usearr, string secinpt, string outfol) {
+void Sampler::setProcrystal(string latType, int cnd, bool pat, VecF<int> patR, VecF<int> patL, int latDimX, int latDimY, float fracH, float fracordH, float fracL, float fracordL, int useL, float fracLlin, int usearr, string secinpt, string outfol) {
     //Set procrystal parameters
 
     latticeType=latType;
@@ -13,7 +13,8 @@ void Sampler::setProcrystal(string latType, int cnd, bool pat, VecF<int> patR, V
     pattern=pat;
     patternR=patR;
     patternL=patL;
-    latticeDim=latDim;
+    latticeDimX=latDimX;
+    latticeDimY=latDimY;
     fractionH=fracH;
     fractionorderedH = fracordH;
     fractionL=fracL;
@@ -76,7 +77,7 @@ void Sampler::sample(Logfile &logfile) {
 
     //Initialise procrystalline lattice
     Lattice procrystal(randomSeed);
-    procrystal.initialise(latticeType,nodeCnd,latticeDim,pattern, fractionH ,fractionorderedH, fractionL,fractionorderedL, useLlinear, fractionLlinear, usearray, secondaryinputFile, outputfolder,patternR,patternL,outputPrefix, outStyle, false,false, writeEnvs);
+    procrystal.initialise(latticeType,nodeCnd,latticeDimX, latticeDimY, pattern, fractionH ,fractionorderedH, fractionL,fractionorderedL, useLlinear, fractionLlinear, usearray, secondaryinputFile, outputfolder,patternR,patternL,outputPrefix, outStyle, false,false, writeEnvs);
     int maxIterations = pow(procrystal.getNumNodes(),3);
     VecF<double> pbc=procrystal.getPeriodicity();
 //    maxIterations=10000;
@@ -91,7 +92,7 @@ void Sampler::sample(Logfile &logfile) {
     for(int i=0; i<maxK; ++i) k[i]=i;
     for(int i=0; i<maxK; ++i) ejkTotal[i]=VecF<int>(maxK);
 
-    int natoms=latticeDim*latticeDim;
+    int natoms=latticeDimX*latticeDimY;
     int dummy4=natoms*fractionH;
     int dummy2=natoms*fractionL;
     int dummy3=natoms - dummy4 - dummy2;
@@ -228,7 +229,7 @@ void Sampler::sample(Logfile &logfile) {
     ++attemptedSamples;
     cout<<convergedSamples<<"/"<<attemptedSamples<<endl;
 //    if(convergedSamples==numSamples) break;
-    procrystal.initialise(latticeType,nodeCnd,latticeDim,pattern, fractionH ,fractionorderedH, fractionL,fractionorderedL, useLlinear,fractionLlinear,usearray, secondaryinputFile, outputfolder,patternR,patternL,outputPrefix, outStyle,true,false,writeEnvs);
+    procrystal.initialise(latticeType,nodeCnd,latticeDimX, latticeDimY, pattern, fractionH ,fractionorderedH, fractionL,fractionorderedL, useLlinear,fractionLlinear,usearray, secondaryinputFile, outputfolder,patternR,patternL,outputPrefix, outStyle,true,false,writeEnvs);
 //    }
     cout<<double(averageIterations)/numSamples<<endl;
 
@@ -296,14 +297,14 @@ void Sampler::bruteForce(Logfile &logfile) {
 
     //Initialise procrystalline lattice
     Lattice procrystal(randomSeed);
-    procrystal.initialise(latticeType, nodeCnd, latticeDim, pattern, fractionH, fractionorderedH, fractionL,
+    procrystal.initialise(latticeType, nodeCnd, latticeDimX, latticeDimY, pattern, fractionH, fractionorderedH, fractionL,
                           fractionorderedL, useLlinear, fractionLlinear, usearray, secondaryinputFile, outputfolder,
                           patternR, patternL, outputPrefix, outStyle, false, true, writeEnvs);
     int numNodes = procrystal.getNumNodes();
     cout << numNodes << endl;
 
     //Setup analysis containers and output file
-    int maxK = 4 * latticeDim;
+    int maxK = 4 * latticeDimX;
     VecF<int> k(maxK);
     VecF<int> pkTotal(maxK);
     VecF<VecF<int> > ejkTotal(maxK);
@@ -346,7 +347,7 @@ void Sampler::bruteForce(Logfile &logfile) {
                     breakPairB.addValue(pairB[i]);
                 }
             }
-            procrystal.initialise(latticeType, nodeCnd, latticeDim, pattern, fractionH, fractionorderedH, fractionL,
+            procrystal.initialise(latticeType, nodeCnd, latticeDimX, latticeDimY, pattern, fractionH, fractionorderedH, fractionL,
                                   fractionorderedL, useLlinear, fractionLlinear, usearray, secondaryinputFile,
                                   outputfolder, patternR, patternL, outputPrefix, outStyle, true, true, writeEnvs);
             procrystal.generate(breakPairA, breakPairB);
@@ -358,7 +359,7 @@ void Sampler::bruteForce(Logfile &logfile) {
             netFile.writeRowVector(netAnalysis);
             if (writeSamples) procrystal.writeNetwork(outputPrefix, acceptCount);
             logfile.write("Configuration found");
-            procrystal.initialise(latticeType, nodeCnd, latticeDim, pattern, fractionH, fractionorderedH, fractionL,
+            procrystal.initialise(latticeType, nodeCnd, latticeDimX, latticeDimY, pattern, fractionH, fractionorderedH, fractionL,
                                   fractionorderedL, useLlinear, fractionLlinear, usearray, secondaryinputFile,
                                   outputfolder, patternR, patternL, outputPrefix, outStyle, true, writeEnvs);
             ++acceptCount;
