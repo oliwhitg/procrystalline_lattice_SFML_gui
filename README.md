@@ -100,3 +100,24 @@ Please check out the gallery for some examples, which show some visualisations o
 This is a very brief overview of the code, designed to get some output.
 Please let me know if you want to use it for research purposes and I will be happy to help.
 
+
+
+
+
+# CONNECTION DETAILS
+
+```
+                        (1-dimY)*dimX
+          ____________________/____________________
+          |                                       |
+          |                 (+dimX)               |
+          |                   /                   |
+(dimX-1)  -            (-1) - x - (+1)            -  (1-dimX)
+          |                   /                   |
+          |                 (-dimX)               |
+          |                                       |   
+          ____________________/____________________
+                        
+                        (dimY-1)*dimX
+```
+
